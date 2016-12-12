@@ -16,11 +16,11 @@ public interface JeuConfig {
     final static public int DamierSize = 30;
 	
     //nombre de ligne de chesspad
-    final static public int NombreDeLigne = 20;
+    final static public int NombreDeLigne = 19;
     //nombre de colone de chesspad
-    final static public int NombreDeColone = 20;
+    final static public int NombreDeColone = 19;
 	
     //Initial position of chesspas 
-    final static public int X = 30;
-    final static public int Y = 60;
+    final static public int X = 20;
+    final static public int Y = 80;
 }

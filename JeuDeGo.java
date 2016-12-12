@@ -5,8 +5,9 @@
  */
 package jeudego;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -16,13 +17,19 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class JeuDeGo extends JPanel{
-	//建立存储棋子的二维数组
+
+
+public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
+	TextField text_1=new TextField("Tour Noir"), // initialiser les texte
+	text_2=new TextField(" "),
+	text_3=new TextField("Noir caputuree"),
+	text_4=new TextField("Blanc caputuree");
+	int noirCaputuree, blancCaputuree; // nombre de noir/blanc caputuree
+	// matrix pour stocker les infos
 	private Pierre AllChess[][] = new Pierre[JeuConfig.NombreDeColone+2][JeuConfig.NombreDeLigne+2];
-       	//黑白棋判断变量
+       	// boolean pour definir la tour(Noir/Blanc)
+	public static boolean changeTurn = false;
 	public static boolean BlackWhite = true;
-        //
-        public static boolean changeTurn = false;
         //count of pierre noir
         private int countPN;
         //count of pierre blanc
@@ -30,11 +37,19 @@ public class JeuDeGo extends JPanel{
         //
         private int flag;
 
-        //游戏内容
+        // fonction principale
 	public JeuDeGo(){
+		add(text_1);text_1.setBounds(20, 700, 20, 26);
+		add(text_3);text_3.setBounds(40, 700, 150, 26);
+		add(text_4);text_4.setBounds(240, 700, 150, 26);
+		text_3.setText("Noir caputuree:"+countPN);
+		text_4.setText("Blanc caputuree:"+countPW);
+		text_1.setEditable(false);
+		text_3.setEditable(false);
+		text_4.setEditable(false);
         countPN = 0;
         countPW = 0;
-	//AllChess数组初始化
+	//AllChess initialiser
         for(int j=0;j<JeuConfig.NombreDeColone+2;j++){
             for(int i=0;i<JeuConfig.NombreDeLigne+2;i++){
                 if(i == 0 || j == 0 || i == JeuConfig.NombreDeColone + 1 || j == JeuConfig.NombreDeLigne + 1){
@@ -50,30 +65,42 @@ public class JeuDeGo extends JPanel{
                 int x = CorrectXY(e.getX());
                 int y = CorrectXY(e.getY());
                 //boolean turn;
-                if(BlackWhite){
-                    if(AllChess[x][y].isSameColor(Color.yellow)){
-                        AllChess[x][y].setColor(Color.black);
-                        Judge(x, y, Color.white);
-                        if(AllChess[x][y].isSameColor(Color.black)){
-                            BlackWhite = false;
-                            changeTurn = true;
-                        }else{
-                            changeTurn = false;
-                        }           
-                    }
-                }
-                else {
-                    if(AllChess[x][y].isSameColor(Color.yellow)){
-                        AllChess[x][y].setColor(Color.white);
-                        Judge(x, y, Color.black);
-                        if(AllChess[x][y].isSameColor(Color.white)){
-                            BlackWhite = true;  
-                            changeTurn = true;
-                        }else{
-                            changeTurn = false;
-                        }                 
-                    }
-                }
+                if (x > JeuConfig.NombreDeLigne+1 || y > JeuConfig.NombreDeColone+1) {
+					text_1.setText("Depasser!");
+				}else{
+					text_1.setText("Tour noir");
+					if(BlackWhite){
+	                    if(AllChess[x][y].isSameColor(Color.yellow)){
+	                        AllChess[x][y].setColor(Color.black);
+	                        Judge(x, y, Color.white);
+	                        if(AllChess[x][y].isSameColor(Color.black)){
+	                            BlackWhite = false;
+	                            changeTurn = true;
+	                        }else{
+	                            changeTurn = false;
+	                        }
+	                        text_1.setText("Tour blanc");
+	                    }
+	                    text_3.setText("Noir caputuree:"+countPN);
+	            		text_4.setText("Blanc caputuree:"+countPW);
+	                }
+	                else {
+	                	text_1.setText("Tour blanc");
+	                    if(AllChess[x][y].isSameColor(Color.yellow)){
+	                        AllChess[x][y].setColor(Color.white);
+	                        Judge(x, y, Color.black);
+	                        if(AllChess[x][y].isSameColor(Color.white)){
+	                            BlackWhite = true;  
+	                            changeTurn = true;
+	                        }else{
+	                            changeTurn = false;
+	                        }          
+	                        text_1.setText("Tour noir");
+	                    }
+	                    text_3.setText("Noir caputuree:"+countPN);
+	            		text_4.setText("Blanc caputuree:"+countPW);
+	                }
+				}
                 repaint();
             }
             @Override
@@ -95,8 +122,8 @@ public class JeuDeGo extends JPanel{
         });
         }
 		
-	//判断是否胜利
-        public void Judge(int x, int y, Color c){
+	// definir le jeu est fini
+         public void Judge(int x, int y, Color c){
             //Groupe
             Groupe p1 = new Groupe();
             ArrayList<Groupe> p2 = new ArrayList<>();
@@ -140,14 +167,30 @@ public class JeuDeGo extends JPanel{
                 pi.resetGroupe();
             }
 	}
-	//游戏结束
+         public void removeGroupe(Groupe g){
+             if(g.getGroupe().size()> 1){
+                 for(Pierre p : g.getGroupe()){
+                 if(p.isSameColor(Color.white)) countPW++;
+                 else if(p.isSameColor(Color.black)) countPN++;
+                 p.setColor(Color.red);
+                 }
+             }else if(g.getGroupe().size() == 1){
+                 Pierre p = g.getGroupe().get(0);
+                 if(p.isSameColor(Color.white)) countPW++;
+                 else if(p.isSameColor(Color.black)) countPN++;
+                 p.setColor(Color.yellow);
+                 p.setKo(2);
+             }           
+         }       
+         
+         // le jeu est fini
 	public void GameOver(String str){
     	Calendar cal = new GregorianCalendar();
     	str = str + "\n 点击确定结束游戏" + "\n 当前时间" + cal.getTime().toString();
         JOptionPane.showMessageDialog(null, str, "游戏结束————by David Chang", 1);
     	System.exit(0);
         }
-	//校对坐标
+	// corriger les coordonnees
 	public int CorrectXY(int x){
 		int a;
 		a = x % JeuConfig.DamierSize;
@@ -186,21 +229,14 @@ public class JeuDeGo extends JPanel{
             }
         }        
         //remove Groupe
-        public void removeGroupe(Groupe g){
-            if(g.getGroupe().size()> 1){
-                for(Pierre p : g.getGroupe()){
-                if(p.isSameColor(Color.white)) countPW++;
+
+        //remove Pierre
+        public void removePierre(Pierre p){
+            if(p.isSameColor(Color.white)) countPW++;
                 else if(p.isSameColor(Color.black)) countPN++;
-                p.setColor(Color.red);
-                }
-            }else if(g.getGroupe().size() == 1){
-                Pierre p = g.getGroupe().get(0);
-                if(p.isSameColor(Color.white)) countPW++;
-                else if(p.isSameColor(Color.black)) countPN++;
-                p.setColor(Color.yellow);
-                p.setKo(2);
-            }           
-        }       
+                AllChess[p.getX()][p.getY()].setColor(Color.red);
+        }
+       
         //search group
         public void searchGroupe1(Groupe g, int index){
             Pierre pi = g.getGroupe().get(index);
@@ -255,7 +291,7 @@ public class JeuDeGo extends JPanel{
             return true;
         }
         public void countDownKo(boolean flag){
-              
+            
             for(int j=1;j<JeuConfig.NombreDeColone+1;j++){
                 for(int i=1;i<JeuConfig.NombreDeLigne+1;i++){
                     AllChess[i][j].countKo(flag);
@@ -288,4 +324,39 @@ public class JeuDeGo extends JPanel{
                 }
             }
         }
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 }

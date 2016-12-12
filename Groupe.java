@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class Groupe {
+public class Groupe { // classe Groupe pour stocker les pieces dans la meme groupe
     private ArrayList<Pierre> groupe;
 
     public Groupe() {
