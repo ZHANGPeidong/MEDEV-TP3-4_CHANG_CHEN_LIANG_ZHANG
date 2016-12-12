@@ -26,22 +26,22 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
 	text_4=new TextField("Blanc caputuree");
 	int noirCaputuree, blancCaputuree; // nombre de noir/blanc caputuree
 	// matrix pour stocker les infos
-	private Pierre AllChess[][] = new Pierre[JeuConfig.NombreDeColone+2][JeuConfig.NombreDeLigne+2];
+	private static Pierre AllChess[][] = new Pierre[JeuConfig.NombreDeColone+2][JeuConfig.NombreDeLigne+2];
        	// boolean pour definir la tour(Noir/Blanc)
 	public static boolean changeTurn = false;
 	public static boolean BlackWhite = true;
         //count of pierre noir
-        private int countPN;
+        public static int countPN;
         //count of pierre blanc
-        private int countPW;
+        public static int countPW;
         //
         private int flag;
 
         // fonction principale
 	public JeuDeGo(){
-		add(text_1);text_1.setBounds(20, 700, 20, 26);
+		add(text_1);text_1.setBounds(5, 5, 20, 26);
 		add(text_3);text_3.setBounds(40, 700, 150, 26);
-		add(text_4);text_4.setBounds(240, 700, 150, 26);
+		add(text_4);text_4.setBounds(700, 700, 150, 26);
 		text_3.setText("Noir caputuree:"+countPN);
 		text_4.setText("Blanc caputuree:"+countPW);
 		text_1.setEditable(false);
@@ -167,7 +167,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
                 pi.resetGroupe();
             }
 	}
-         public void removeGroupe(Groupe g){
+         public static void removeGroupe(Groupe g){
              if(g.getGroupe().size()> 1){
                  for(Pierre p : g.getGroupe()){
                  if(p.isSameColor(Color.white)) countPW++;
@@ -191,7 +191,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
     	System.exit(0);
         }
 	// corriger les coordonnees
-	public int CorrectXY(int x){
+	public static int CorrectXY(int x){
 		int a;
 		a = x % JeuConfig.DamierSize;
 		if(a < (JeuConfig.DamierSize / 2)) x = x / JeuConfig.DamierSize;
@@ -199,7 +199,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
 		return x ;
 	}
         //liberte
-        public boolean noLiberte(Groupe g){
+        public static boolean noLiberte(Groupe g){
             for(int j=0;j<JeuConfig.NombreDeColone+2;j++){
                for(int i=0;i<JeuConfig.NombreDeLigne+2;i++){
                    for(Pierre p : g.getGroupe()){
@@ -223,7 +223,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
             }
             return true;
         }
-        public void removeListGroupe(ArrayList<Groupe> listgroupe){
+        public static void removeListGroupe(ArrayList<Groupe> listgroupe){
             for(Groupe g : listgroupe){
                 removeGroupe(g);
             }
@@ -231,7 +231,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
         //remove Groupe
 
         //remove Pierre
-        public void removePierre(Pierre p){
+        public static void removePierre(Pierre p){
             if(p.isSameColor(Color.white)) countPW++;
                 else if(p.isSameColor(Color.black)) countPN++;
                 AllChess[p.getX()][p.getY()].setColor(Color.red);
@@ -282,7 +282,7 @@ public class JeuDeGo extends JPanel implements MouseListener,ActionListener{
             }    
         }
         
-        public boolean judgeGroupe(ArrayList<Groupe> groupe){
+        public static boolean judgeGroupe(ArrayList<Groupe> groupe){
             for(Groupe g : groupe){
                 if(!noLiberte(g)){
                     return false;

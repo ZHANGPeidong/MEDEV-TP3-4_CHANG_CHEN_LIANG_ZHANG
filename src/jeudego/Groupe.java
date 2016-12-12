@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class Groupe { // classe Groupe pour stocker les pieces dans la meme groupe
-    private ArrayList<Pierre> groupe;
+    public static ArrayList<Pierre> groupe;
 
     public Groupe() {
         this.groupe = new ArrayList<>();
@@ -23,7 +23,7 @@ public class Groupe { // classe Groupe pour stocker les pieces dans la meme grou
         return groupe;
     }
        
-    public void ajouterPierre(Pierre p){
+    public static void ajouterPierre(Pierre p){
         int i = 0;
         for(Pierre pi : groupe){
             if(p.isSamePierre(pi)){
@@ -61,7 +61,7 @@ public class Groupe { // classe Groupe pour stocker les pieces dans la meme grou
             p.setMembre(false);
         }
     }
-    public void affichageGroupe(){
+    public static void affichageGroupe(){
         System.out.println("Affichage groupe");
         for(Pierre p : groupe){
             System.out.println(p.getX() + ", " + p.getY() + ", " + p.getColor() + ", " + p.isMembre());
